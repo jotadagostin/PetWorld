@@ -1,0 +1,34 @@
+import type { Metadata } from 'next';
+import { Inter } from 'next/font/google';
+import '@/src/styles/globals.css';
+
+const inter = Inter({
+  variable: '--font-inter',
+  subsets: ['latin'],
+  weight: ['400', '500', '700'],
+});
+const interTight = Inter({
+  variable: '--font-inter-tight',
+  subsets: ['latin'],
+  weight: ['700'],
+});
+
+export const metadata: Metadata = {
+  title: 'Pet World',
+  description: 'Here you see all the clients and services booked by them',
+};
+
+export default function RootLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
+  return (
+    <html
+      lang="en"
+      className={`${inter.variable} ${interTight.variable} h-full antialiased`}
+    >
+      <body className="min-h-full flex flex-col">{children}</body>
+    </html>
+  );
+}
