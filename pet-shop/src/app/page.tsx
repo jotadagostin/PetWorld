@@ -5,13 +5,13 @@ import {
   Appointment,
   AppointmentPeriod,
   AppointmentPeriodDay,
-} from '@/src/types/appointment';
+} from '@/types/appointment';
 
 const appointments = [
   {
     id: '1',
     petName: 'Rex',
-    description: 'Consulta',
+    description: 'Consultation',
     tutorName: 'João',
     phone: '1234567890',
     scheduleAt: new Date('2025-08-17T10:00:00'),
@@ -20,7 +20,7 @@ const appointments = [
     id: '2',
     petName: 'Mimi',
     tutorName: 'Maria',
-    description: 'Banho',
+    description: 'Shower',
     phone: '1234567890',
     scheduleAt: new Date('2025-08-17T11:00:00'),
   },
@@ -28,7 +28,7 @@ const appointments = [
     id: '3',
     petName: 'Nina',
     tutorName: 'Natalia',
-    description: 'Consulta',
+    description: 'Consultation',
     phone: '1234567890',
     scheduleAt: new Date('2025-08-17T14:00:00'),
   },
@@ -36,7 +36,7 @@ const appointments = [
     id: '4',
     petName: 'Nina',
     tutorName: 'Natalia',
-    description: 'Consulta',
+    description: 'Consultation',
     phone: '1234567890',
     scheduleAt: new Date('2025-08-17T19:00:00'),
   },
