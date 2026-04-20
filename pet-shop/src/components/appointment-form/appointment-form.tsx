@@ -24,31 +24,57 @@ import {
   Calendar,
   CalendarIcon,
   ChevronDownIcon,
+  Clock,
   Dog,
+  Loader2,
   Phone,
   User,
 } from 'lucide-react';
 import { Input } from '../ui/input';
 import { Textarea } from '../ui/textarea';
 import { IMaskInput } from 'react-imask';
-import { format, startOfToday } from 'date-fns';
+import { format, setHours, setMinutes, startOfToday } from 'date-fns';
 import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
 import { cn } from '@/lib/utils';
 import { CalendarPicker } from '../ui/calendar';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '../ui/select';
 
-const appoimentFormSchema = z.object({
-  tutorName: z.string().min(3, 'Tutor name is required'),
-  petName: z.string().min(3, 'Pet name is required'),
-  phone: z.string().min(11, 'Phone number is required'),
-  description: z.string().min(3, 'Description is required'),
-  scheduleAt: z
-    .date({
-      error: 'Schedule date is required',
-    })
-    .min(startOfToday(), {
-      message: 'Schedule date must be in the future',
-    }),
-});
+const appoimentFormSchema = z
+  .object({
+    tutorName: z.string().min(3, 'Tutor name is required'),
+    petName: z.string().min(3, 'Pet name is required'),
+    phone: z.string().min(11, 'Phone number is required'),
+    description: z.string().min(3, 'Description is required'),
+    scheduleAt: z
+      .date({
+        error: 'Schedule date is required',
+      })
+      .min(startOfToday(), {
+        message: 'Schedule date must be in the future',
+      }),
+    time: z.string().min(1, 'Schedule time is required'),
+  })
+  .refine(
+    (data) => {
+      const [hour, minute] = data.time.split(':');
+      const scheduleDateTime = setMinutes(
+        setHours(data.scheduleAt, Number(hour)),
+        Number(minute)
+      );
+
+      return scheduleDateTime > new Date();
+    },
+    {
+      path: ['time'],
+      error: 'Schedule date and time must be in the future',
+    }
+  );
 
 type AppointmentFormValues = z.infer<typeof appoimentFormSchema>;
 
@@ -61,6 +87,7 @@ export const AppointmentForm = () => {
       phone: '',
       description: '',
       scheduleAt: undefined,
+      time: '',
     },
   });
 
@@ -188,57 +215,117 @@ export const AppointmentForm = () => {
               )}
             />
 
-            <FormField
-              control={form.control}
-              name="scheduleAt"
-              render={({ field }) => (
-                <FormItem className="flex flex-col">
-                  <FormLabel className="text-label-medium-size text-content-primary">
-                    Data
-                  </FormLabel>
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <FormControl>
-                        <Button
-                          variant="outline"
-                          className={cn(
-                            'w-full justify-between text-left font-normal bg-background-tertiary border-border-primary text-content-primary hover:bg-background-tertiary hover:border-border-secondary hover:text-content-primary focus-visible:ring-offset-0 focus-visible:ring-1 focus-visible:ring-border-brand focus:border-border-brand focus-visible:border-border-brand',
-                            !field.value && 'text-content-secondary'
-                          )}
-                        >
-                          <div className="flex items-center gap-2">
-                            <CalendarIcon
-                              className=" text-content-brand"
-                              size={20}
-                            />
-                            {field.value ? (
-                              format(field.value, 'dd/MM/yyyy')
-                            ) : (
-                              <span>Selecione uma data</span>
+            <div className="space-y-4 md:grid md:grid-cols-2 md:gap-2 md:space-y-0">
+              <FormField
+                control={form.control}
+                name="scheduleAt"
+                render={({ field }) => (
+                  <FormItem className="flex flex-col">
+                    <FormLabel className="text-label-medium-size text-content-primary">
+                      Data
+                    </FormLabel>
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <FormControl>
+                          <Button
+                            variant="outline"
+                            className={cn(
+                              'w-full justify-between text-left font-normal bg-background-tertiary border-border-primary text-content-primary hover:bg-background-tertiary hover:border-border-secondary hover:text-content-primary focus-visible:ring-offset-0 focus-visible:ring-1 focus-visible:ring-border-brand focus:border-border-brand focus-visible:border-border-brand',
+                              !field.value && 'text-content-secondary'
                             )}
+                          >
+                            <div className="flex items-center gap-2">
+                              <CalendarIcon
+                                className=" text-content-brand"
+                                size={20}
+                              />
+                              {field.value ? (
+                                format(field.value, 'dd/MM/yyyy')
+                              ) : (
+                                <span>Selecione uma data</span>
+                              )}
+                            </div>
+                            <ChevronDownIcon className="opacity-50 h-4 w-4" />
+                          </Button>
+                        </FormControl>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-auto p-0" align="start">
+                        <CalendarPicker
+                          mode="single"
+                          selected={field.value}
+                          onSelect={field.onChange}
+                          disabled={(date) => date < startOfToday()}
+                        />
+                      </PopoverContent>
+                    </Popover>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="time"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-label-medium-size text-content-primary">
+                      Hour
+                    </FormLabel>
+                    <FormControl>
+                      <Select
+                        onValueChange={field.onChange}
+                        value={field.value}
+                      >
+                        <SelectTrigger>
+                          <div className="flex items-center gap-2">
+                            <Clock className="h4 w-4 text-content-brand" />
+                            <SelectValue placeholder="--.-- --" />
                           </div>
-                          <ChevronDownIcon className="opacity-50 h-4 w-4" />
-                        </Button>
-                      </FormControl>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-auto p-0" align="start">
-                      <CalendarPicker
-                        mode="single"
-                        selected={field.value}
-                        onSelect={field.onChange}
-                        disabled={(date) => date < startOfToday()}
-                      />
-                    </PopoverContent>
-                  </Popover>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {TIME_OPTIONS.map((time) => (
+                            <SelectItem key={time} value={time}>
+                              {time}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
 
-            <Button type="submit">Submit</Button>
+            <div className="flex justify-end">
+              <Button
+                type="submit"
+                variant="brand"
+                disabled={form.formState.isSubmitting}
+              >
+                {form.formState.isSubmitting && (
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                )}
+                Schedule
+              </Button>
+            </div>
           </form>
         </Form>
       </DialogContent>
     </Dialog>
   );
 };
+
+const generateTimeOptions = (): string[] => {
+  const times = [];
+
+  for (let hour = 9; hour <= 21; hour++) {
+    for (let minute = 0; minute < 60; minute += 30) {
+      if (hour === 21 && minute > 0) break; // Stop at 21:00
+      const timeString = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`;
+      times.push(timeString);
+    }
+  }
+  return times;
+};
+
+const TIME_OPTIONS = generateTimeOptions();
