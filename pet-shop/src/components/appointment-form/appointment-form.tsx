@@ -34,6 +34,7 @@ import { IMaskInput } from 'react-imask';
 import { format, startOfToday } from 'date-fns';
 import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
 import { cn } from '@/lib/utils';
+import { CalendarPicker } from '../ui/calendar';
 
 const appoimentFormSchema = z.object({
   tutorName: z.string().min(3, 'Tutor name is required'),
@@ -221,7 +222,7 @@ export const AppointmentForm = () => {
                       </FormControl>
                     </PopoverTrigger>
                     <PopoverContent className="w-auto p-0" align="start">
-                      <Calendar
+                      <CalendarPicker
                         mode="single"
                         selected={field.value}
                         onSelect={field.onChange}
