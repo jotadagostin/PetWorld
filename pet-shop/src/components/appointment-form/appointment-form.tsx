@@ -45,7 +45,9 @@ import {
   SelectValue,
 } from '../ui/select';
 import { toast } from 'sonner';
-import { createAppointment } from '@/app/action';
+import { createAppointment, updateAppointment } from '@/app/action';
+import { useEffect, useState } from 'react';
+import { Appointment } from '@/types/appointment';
 
 const appoimentFormSchema = z
   .object({
@@ -80,7 +82,16 @@ const appoimentFormSchema = z
 
 type AppointmentFormValues = z.infer<typeof appoimentFormSchema>;
 
-export const AppointmentForm = () => {
+type AppointmentFormProps = {
+  appointment?: Appointment;
+  children?: React.ReactNode;
+};
+
+export const AppointmentForm = ({
+  appointment,
+  children,
+}: AppointmentFormProps) => {
+  const [isOpen, setIsOpen] = useState(false);
   const form = useForm<AppointmentFormValues>({
     resolver: zodResolver(appoimentFormSchema),
     defaultValues: {
@@ -98,26 +109,35 @@ export const AppointmentForm = () => {
     const scheduleAt = new Date(data.scheduleAt);
     scheduleAt.setHours(Number(hour), Number(minute), 0, 0);
 
-    const result = await createAppointment({
-      ...data,
-      scheduleAt,
-    });
+    const isEdit = !!appointment?.id;
+
+    const result = isEdit
+      ? await updateAppointment(appointment.id, {
+          ...data,
+          scheduleAt,
+        })
+      : await createAppointment({
+          ...data,
+          scheduleAt,
+        });
 
     if (result?.error) {
       toast.error(result.error);
       return;
     }
 
-    toast.success('Schedule created with sucess!');
-
+    toast.success(`Schedule  ${isEdit ? 'updated' : 'created'}  with sucess!`);
+    setIsOpen(false);
     form.reset();
   };
 
+  useEffect(() => {
+    form.reset(appointment);
+  }, [appointment, form]);
+
   return (
-    <Dialog>
-      <DialogTrigger asChild>
-        <Button variant="brand">New Schedule</Button>
-      </DialogTrigger>
+    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+      {children && <DialogTrigger asChild>{children}</DialogTrigger>}
 
       <DialogContent
         variant="appointment"
