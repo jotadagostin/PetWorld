@@ -1,11 +1,11 @@
 import { prisma } from '@/lib/prisma';
 import { PeriodSection } from '../components/period-section';
-import { APPOINTMENT_DATA, groupAppointmentsByPeriod } from '@/utils';
+import { groupAppointmentsByPeriod } from '@/utils';
 import { AppointmentForm } from '@/components/appointment-form';
 
 export default async function Home() {
-  const appointment = await prisma.appointment.findMany();
-  const periods = groupAppointmentsByPeriod(APPOINTMENT_DATA);
+  const appointments = await prisma.appointment.findMany();
+  const periods = groupAppointmentsByPeriod(appointments);
 
   return (
     <div className="bg-background-primary p-6 min-h-screen">
