@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { Inter, Geist } from 'next/font/google';
 import '@/styles/globals.css';
 import { cn } from '@/lib/utils';
+import { Toaster } from 'sonner';
 
 const geist = Geist({ subsets: ['latin'], variable: '--font-sans' });
 
@@ -38,7 +39,10 @@ export default function RootLayout({
         geist.variable
       )}
     >
-      <body className="min-h-screen flex flex-col">{children}</body>
+      <body className="min-h-screen flex flex-col">
+        {children}
+        <Toaster position="top-right" />
+      </body>
     </html>
   );
 }
