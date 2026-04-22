@@ -3,9 +3,30 @@ import { PeriodSection } from '../components/period-section';
 import { groupAppointmentsByPeriod } from '@/utils';
 import { AppointmentForm } from '@/components/appointment-form';
 import { Button } from '@/components/ui/button';
+import { endOfDay, parseISO, startOfDay } from 'date-fns';
+import { DatePicker } from '@/components/date-picker';
 
-export default async function Home() {
-  const appointments = await prisma.appointment.findMany();
+export default async function Home({
+  searchParams,
+}: {
+  searchParams: Promise<{ date?: string }>;
+}) {
+  const { date } = await searchParams;
+  console.log('date', date);
+  const selectedDate = date ? parseISO(date) : new Date();
+
+  const appointments = await prisma.appointment.findMany({
+    where: {
+      scheduleAt: {
+        gte: startOfDay(selectedDate),
+        lte: endOfDay(selectedDate),
+      },
+    },
+    orderBy: {
+      scheduleAt: 'asc',
+    },
+  });
+
   const periods = groupAppointmentsByPeriod(appointments);
 
   return (
@@ -19,6 +40,14 @@ export default async function Home() {
             here you can see all clients and services scheduled for today.
           </p>
         </div>
+
+        <div className="hidden md:flex items-center gap-4">
+          <DatePicker />
+        </div>
+      </div>
+
+      <div className="mt-3 mb-8 md:hidden">
+        <DatePicker />
       </div>
 
       <div className="pb-24 md:pb-0">
