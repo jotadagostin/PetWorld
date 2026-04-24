@@ -6,7 +6,7 @@ import {
   ChevronLeft,
   ChevronRight,
 } from 'lucide-react';
-import { CalendarPicker } from '../ui/calendar'; // 👈
+import { CalendarPicker } from '../ui/calendar';
 import { Button } from '../ui/button';
 import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
@@ -78,13 +78,14 @@ export const DatePicker = () => {
             <ChevronDown className="h-4 w-4 opacity-50" />
           </Button>
         </PopoverTrigger>
-        <PopoverContent>
+        <PopoverContent className="w-auto p-0">
           <CalendarPicker
             mode="single"
             selected={date}
             onSelect={handleDateSelect}
             autoFocus
             locale={enUS}
+            className="border-0"
           />
         </PopoverContent>
       </Popover>
