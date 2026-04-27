@@ -47,7 +47,7 @@ export default async function Home({
       </div>
 
       <div className="mt-3 mb-8 md:hidden">
-        <DatePicker />
+        <DatePicker  />
       </div>
 
       <div className="pb-24 md:pb-0">
