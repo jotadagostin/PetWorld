@@ -11,7 +11,7 @@ export const Logo = () => {
         <Dog />
       </div>
       <span className="text-label-large-size font-bold text-content-brand">
-        MUNDO PET
+        PET WORLD
       </span>
     </Link>
   );

@@ -40,9 +40,9 @@ export default function RootLayout({
         geist.variable
       )}
     >
-      <body className="min-h-screen flex flex-col">
+      <body className="min-h-screen flex flex-col bg-background-primary">
         <Header />
-        <div className="">
+        <div className="max-w-3xl mx-auto">
           <main className="flex-1 flex-col mt-12">
             {children}
             <Toaster position="top-right" />
