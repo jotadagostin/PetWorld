@@ -67,3 +67,7 @@ export function calculatePeriod(hour: number) {
     isEvening,
   };
 }
+
+export function formatDateTime(date: Date): string {
+  return date.toLocaleTimeString('');
+}
