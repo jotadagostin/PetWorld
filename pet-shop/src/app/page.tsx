@@ -30,8 +30,8 @@ export default async function Home({
   const periods = groupAppointmentsByPeriod(appointments);
 
   return (
-    <div className="bg-background-primary p-6 min-h-screen">
-      <div className="flex items-center justify-between mb-8">
+    <div className="bg-background-primary p-6 ">
+      <div className="flex items-center justify-between mb-8 gap-10">
         <div>
           <h1 className="text-title-size text-content-primary mb-2">
             Your Agenda
@@ -47,7 +47,7 @@ export default async function Home({
       </div>
 
       <div className="mt-3 mb-8 md:hidden">
-        <DatePicker  />
+        <DatePicker />
       </div>
 
       <div className="pb-24 md:pb-0">
